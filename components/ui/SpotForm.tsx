@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSpot, updateSpot } from "@/lib/actions"; // We will add updateSpot later
-import { Loader2, CreditCard, CheckCircle, MapPin, Image as ImageIcon } from "lucide-react";
+import { Loader2, CreditCard, CheckCircle, MapPin, Image as ImageIcon, Car } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ImageUploader } from "./ImageUploader";
 import { getCoordinates } from "@/lib/getCoordinates";
@@ -19,12 +19,17 @@ type SpotFormProps = {
         opening_time?: string;
         closing_time?: string;
         regular_holiday: string;
+        payment_methods?: string[] | null;
+        average_cost?: number | null;
         images: string[];
+        is_proxy?: boolean;
+        has_parking?: boolean;
     };
     isEditing?: boolean;
+    isAdmin?: boolean;
 };
 
-export default function SpotForm({ initialData, isEditing = false }: SpotFormProps) {
+export default function SpotForm({ initialData, isEditing = false, isAdmin = false }: SpotFormProps) {
     const [step, setStep] = useState<"form" | "payment" | "success">("form");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [newImageFiles, setNewImageFiles] = useState<File[]>([]);
@@ -55,7 +60,6 @@ export default function SpotForm({ initialData, isEditing = false }: SpotFormPro
             setCoordinates(coords);
         } else {
             // Optional: Handle error or not found
-            console.log("Location not found");
             alert("場所が見つかりませんでした。住所を詳しく入力してみてください。");
         }
     };
@@ -129,6 +133,21 @@ export default function SpotForm({ initialData, isEditing = false }: SpotFormPro
 
     return (
         <form onSubmit={handleSubmit} className="space-y-8 rounded-xl border border-white/10 bg-card p-6 md:p-8 shadow-lg">
+
+            {/* Parking - Anyone can edit */}
+            <div className="flex items-center space-x-2 border p-4 rounded-lg bg-card/50">
+                <input
+                    type="checkbox"
+                    id="has_parking"
+                    name="has_parking"
+                    defaultChecked={initialData?.has_parking || false}
+                    className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                />
+                <label htmlFor="has_parking" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2">
+                    <Car className="h-4 w-4" />
+                    駐車場あり
+                </label>
+            </div>
 
             {/* Spot Details */}
             <div className="space-y-4">
@@ -233,6 +252,48 @@ export default function SpotForm({ initialData, isEditing = false }: SpotFormPro
                 </div>
 
                 <div className="grid gap-2">
+                    <label className="text-sm font-medium">支払い方法</label>
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                        {["cash", "credit_card", "electronic_money", "qr_code"].map((method) => {
+                            const labels: Record<string, string> = {
+                                "cash": "現金",
+                                "credit_card": "クレジットカード",
+                                "electronic_money": "電子マネー",
+                                "qr_code": "QR決済"
+                            };
+                            return (
+                                <label key={method} className="flex items-center space-x-2 border rounded-md p-3 cursor-pointer hover:bg-muted/50 transition-colors">
+                                    <input
+                                        type="checkbox"
+                                        name="payment_methods"
+                                        value={method}
+                                        defaultChecked={initialData?.payment_methods?.includes(method)}
+                                        className="rounded border-gray-300 text-primary focus:ring-primary"
+                                    />
+                                    <span className="text-sm">{labels[method]}</span>
+                                </label>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                <div className="grid gap-2">
+                    <label className="text-sm font-medium">平均予算 (1人あたり)</label>
+                    <div className="relative">
+                        <span className="absolute left-3 top-2.5 text-muted-foreground">¥</span>
+                        <input
+                            type="number"
+                            name="average_cost"
+                            defaultValue={initialData?.average_cost || ""}
+                            min="0"
+                            step="1000"
+                            className="w-full rounded-md border border-input bg-transparent pl-7 pr-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                            placeholder="3000"
+                        />
+                    </div>
+                </div>
+
+                <div className="grid gap-2">
                     <label className="text-sm font-medium">画像 (最大5枚)</label>
                     <ImageUploader
                         onFilesChange={setNewImageFiles}
@@ -241,6 +302,25 @@ export default function SpotForm({ initialData, isEditing = false }: SpotFormPro
                     />
                     <p className="text-xs text-muted-foreground">お店の雰囲気が伝わる写真をアップロードしてください。</p>
                 </div>
+
+                {isAdmin && (
+                    <div className="mt-4 p-4 border border-dashed border-yellow-500/50 bg-yellow-500/10 rounded-lg">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                name="is_proxy"
+                                defaultChecked={initialData?.is_proxy}
+                                className="rounded border-gray-300 text-yellow-600 focus:ring-yellow-600"
+                            />
+                            <span className="text-sm font-bold text-yellow-500">
+                                代理登録 (管理者機能)
+                            </span>
+                        </label>
+                        <p className="text-xs text-muted-foreground mt-1 ml-6">
+                            チェックを入れると「代理登録済み」としてマークされ、支払いステップがスキップされます。
+                        </p>
+                    </div>
+                )}
             </div>
 
             {/* Payment Section - Only for New Spots */}

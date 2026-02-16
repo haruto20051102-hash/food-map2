@@ -14,6 +14,7 @@ import { CATEGORIES, CATEGORY_MAP } from "@/lib/constants";
 
 export default function ExplorePage() {
     const [activeCategory, setActiveCategory] = useState("All");
+    const [showOpenOnly, setShowOpenOnly] = useState(true);
     const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
     const [sortBy, setSortBy] = useState<"distance" | "rating" | "reviews">("distance");
     const [spots, setSpots] = useState<Spot[]>([]);
@@ -27,24 +28,47 @@ export default function ExplorePage() {
 
     // Parse business hours and check if open
     const isOpenNow = (spot: Spot): boolean => {
-        if (!spot.business_hours) return true; // Assume open if no hours set (or false depending on preference)
-
         const now = new Date();
-        const currentHour = now.getHours();
-        const currentMinute = now.getMinutes();
-        const currentTime = currentHour * 60 + currentMinute;
-
-        // Check holiday
         const days = ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日'];
         const today = days[now.getDay()];
+
+        // 1. Check Regular Holiday
         if (spot.regular_holiday && spot.regular_holiday.includes(today)) {
             return false;
         }
 
-        // Parse hours "18:00 - 24:00" or "18:00 - 02:00"
-        // Simple regex for "HH:MM - HH:MM"
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
+        const currentTime = currentHour * 60 + currentMinute;
+
+        // 2. Check DB Columns (opening_time, closing_time)
+        if (spot.opening_time && spot.closing_time) {
+            const [startH, startM] = spot.opening_time.split(':').map(Number);
+            const [endH, endM] = spot.closing_time.split(':').map(Number);
+
+            const startTime = startH * 60 + startM;
+            let endTime = endH * 60 + endM;
+
+            // Handle crossing midnight (e.g. 18:00 - 02:00)
+            if (endTime < startTime) {
+                endTime += 24 * 60;
+            }
+
+            // Adjust current time if it's early morning (e.g. 01:00) but shop is still open from previous day
+            let effectiveCurrentTime = currentTime;
+            if (effectiveCurrentTime < startTime && effectiveCurrentTime < (endTime - 24 * 60)) {
+                // If current time is 01:00, and shop opens at 18:00, this condition ensures we check 25:00 vs range
+                effectiveCurrentTime += 24 * 60;
+            }
+
+            return effectiveCurrentTime >= startTime && effectiveCurrentTime <= endTime;
+        }
+
+        // 3. Fallback: Parse string "18:00 - 24:00"
+        if (!spot.business_hours) return true;
+
         const match = spot.business_hours.match(/(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})/);
-        if (!match) return true; // Could not parse, default to true or false
+        if (!match) return true;
 
         const startH = parseInt(match[1]);
         const startM = parseInt(match[2]);
@@ -54,17 +78,12 @@ export default function ExplorePage() {
         const startTime = startH * 60 + startM;
         let endTime = endH * 60 + endM;
 
-        // Handle crossing midnight (e.g. 26:00 or 02:00)
-        // If end time is smaller than start time, add 24 hours
         if (endTime < startTime) {
             endTime += 24 * 60;
         }
 
-        // Adjust current time if it's past midnight but before closing (for late night spots)
-        // e.g. Now is 01:00 (25:00), Shop is 18:00 - 02:00 (26:00)
         let effectiveCurrentTime = currentTime;
         if (effectiveCurrentTime < startTime && effectiveCurrentTime < (endTime - 24 * 60)) {
-            // It's early morning, treat as previous day's late night
             effectiveCurrentTime += 24 * 60;
         }
 
@@ -127,6 +146,12 @@ export default function ExplorePage() {
 
             } catch (error) {
                 console.error("Failed to fetch data:", error);
+                // Debugging: Log environment variable status (mask part of it)
+                const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+                console.log("Supabase URL defined:", !!url, url ? url.substring(0, 10) + "..." : "undefined");
+                if (error instanceof TypeError && error.message === "Load failed") {
+                    console.error("Network error or CORS issue. Check your internet connection and Supabase URL.");
+                }
             } finally {
                 setLoading(false);
             }
@@ -169,9 +194,11 @@ export default function ExplorePage() {
         return deg * (Math.PI / 180);
     };
 
-    const filteredSpots = activeCategory === "All"
-        ? spots
-        : spots.filter(spot => spot.type === activeCategory);
+    const filteredSpots = spots.filter(spot => {
+        if (activeCategory !== "All" && spot.type !== activeCategory) return false;
+        if (showOpenOnly && !isOpenNow(spot)) return false;
+        return true;
+    });
 
     // Sort spots
     const sortedSpots = [...filteredSpots].sort((a, b) => {
@@ -245,6 +272,7 @@ export default function ExplorePage() {
             </div>
 
             {/* Daily Pick Section */}
+            {/* Daily Pick Section */}
             {recommendedSpot && (
                 <div className="mb-10 rounded-xl border border-primary/20 bg-gradient-to-br from-primary/10 via-background to-background p-6 relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-4 opacity-10">
@@ -302,6 +330,24 @@ export default function ExplorePage() {
                     </div>
                 </div>
             )}
+
+            {/* Filter Controls */}
+            <div className="mb-6 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => setShowOpenOnly(!showOpenOnly)}
+                        className={cn(
+                            "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all border",
+                            showOpenOnly
+                                ? "bg-green-500/10 text-green-500 border-green-500/50"
+                                : "bg-background text-muted-foreground border-white/10 hover:bg-muted"
+                        )}
+                    >
+                        <Clock className="h-4 w-4" />
+                        {showOpenOnly ? "営業中のみ表示" : "営業時間外も表示"}
+                    </button>
+                </div>
+            </div>
 
             {/* Sort Controls */}
             <div className="mb-4 flex flex-wrap gap-2 items-center">

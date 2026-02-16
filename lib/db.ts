@@ -19,6 +19,11 @@ export type Spot = {
     subscription_expires_at?: string; // ISO 8601 date string
     reviews?: { count: number }[];
     review_count?: number;
+    payment_methods?: string[] | null;
+    average_cost?: number | null;
+    user_id: string;
+    is_proxy?: boolean;
+    has_parking?: boolean;
 };
 
 // Client-side fetch (for simple use cases or if needed)

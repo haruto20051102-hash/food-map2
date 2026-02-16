@@ -11,6 +11,7 @@ export default function NewSpotPage() {
     const [step, setStep] = useState<"form" | "payment" | "success">("form");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [isAdmin, setIsAdmin] = useState(false);
     const router = useRouter();
     const supabase = createClient();
 
@@ -19,7 +20,19 @@ export default function NewSpotPage() {
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) {
                 router.push("/login?next=/spots/new");
+                return;
             }
+
+            const { data: profile } = await supabase
+                .from("profiles")
+                .select("role")
+                .eq("id", session.user.id)
+                .single();
+
+            if (profile?.role === 'admin') {
+                setIsAdmin(true);
+            }
+
             setIsLoading(false);
         };
         checkUser();
@@ -93,7 +106,7 @@ export default function NewSpotPage() {
                 </div>
             </div>
 
-            <SpotForm />
+            <SpotForm isAdmin={isAdmin} />
         </div>
     );
 }

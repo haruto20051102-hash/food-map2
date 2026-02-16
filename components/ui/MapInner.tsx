@@ -55,6 +55,11 @@ export default function MapInner({ center, zoom, spots, className }: MapInnerPro
                             <div className="p-1">
                                 <strong className="block text-sm font-bold mb-1">{spot.name}</strong>
                                 <span className="text-xs text-muted-foreground block mb-2">{spot.type}</span>
+                                {spot.average_cost && (
+                                    <span className="text-xs text-muted-foreground block mb-2">
+                                        ¥{spot.average_cost.toLocaleString()}~
+                                    </span>
+                                )}
                                 <Link href={`/spots/${spot.id}`} className="text-xs text-primary underline hover:text-primary/80">
                                     View Details
                                 </Link>

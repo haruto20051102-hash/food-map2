@@ -86,7 +86,6 @@ export async function getIsFavorite(spotId: string) {
 }
 
 export async function createSpot(formData: FormData) {
-    console.log("createSpot action started");
 
     try {
         const cookieStore = await cookies();
@@ -106,6 +105,10 @@ export async function createSpot(formData: FormData) {
         const openingTime = formData.get("opening_time") as string || null;
         const closingTime = formData.get("closing_time") as string || null;
         const regularHoliday = formData.get("regular_holiday") as string;
+        const paymentMethods = formData.getAll("payment_methods") as string[];
+        const averageCost = formData.get("average_cost") ? parseInt(formData.get("average_cost") as string) : null;
+        const isProxy = formData.get("is_proxy") === "on";
+        const hasParking = formData.get("has_parking") === "on";
 
         // Handle Image Upload
         const imageFiles = formData.getAll("images") as File[];
@@ -155,6 +158,14 @@ export async function createSpot(formData: FormData) {
 
         const isAdmin = profile?.role === 'admin';
 
+        // Calculate expiration for proxy (1 year)
+        let subscriptionExpiresAt = null;
+        if (isAdmin && isProxy) {
+            const date = new Date();
+            date.setFullYear(date.getFullYear() + 1);
+            subscriptionExpiresAt = date.toISOString();
+        }
+
         const { data: insertedSpot, error } = await supabase.from("spots").insert({
             name,
             type,
@@ -167,12 +178,18 @@ export async function createSpot(formData: FormData) {
             opening_time: openingTime,
             closing_time: closingTime,
             regular_holiday: regularHoliday,
+            payment_methods: paymentMethods,
+            average_cost: averageCost,
             user_id: user.id,
+            is_proxy: isAdmin && isProxy,
+            has_parking: hasParking,
+            subscription_expires_at: subscriptionExpiresAt,
             listing_status: isAdmin ? 'active' : 'pending_payment',
             tags: ["New", type],
             rating: 0,
             is_hidden: !isAdmin // If admin, show immediately
         }).select().single();
+
 
         if (error) {
             console.error("Database insert error:", error);
@@ -309,6 +326,14 @@ export async function updateSpot(spotId: string, formData: FormData) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error("Unauthorized");
 
+    const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+    const isAdmin = profile?.role === 'admin';
+
     const name = formData.get("name") as string;
     const type = formData.get("type") as string;
     const description = formData.get("description") as string;
@@ -317,6 +342,10 @@ export async function updateSpot(spotId: string, formData: FormData) {
     const openingTime = formData.get("opening_time") as string || null;
     const closingTime = formData.get("closing_time") as string || null;
     const regularHoliday = formData.get("regular_holiday") as string;
+    const paymentMethods = formData.getAll("payment_methods") as string[];
+    const averageCost = formData.get("average_cost") ? parseInt(formData.get("average_cost") as string) : null;
+    const isProxy = formData.get("is_proxy") === "on";
+    const hasParking = formData.get("has_parking") === "on";
 
     // Handle Image Upload (new images)
     const imageFiles = formData.getAll("images") as File[];
@@ -362,6 +391,10 @@ export async function updateSpot(spotId: string, formData: FormData) {
             opening_time: openingTime,
             closing_time: closingTime,
             regular_holiday: regularHoliday,
+            payment_methods: paymentMethods,
+            average_cost: averageCost,
+            ...(isAdmin ? { is_proxy: isProxy } : {}),
+            has_parking: hasParking,
             images: updatedImages,
             // Update lat/lng if provided (re-geocoded)
             ...(formData.get("lat") && formData.get("lng") ? {
@@ -545,3 +578,109 @@ export async function updateReviewRank(reviewId: string, rank: number | null) {
 
 
 
+export async function extendSubscription(spotId: string) {
+    const cookieStore = await cookies();
+    const supabase = createClient(cookieStore);
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("Unauthorized");
+
+    // Check for admin role
+    const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+    if (profile?.role !== 'admin') {
+        throw new Error("Unauthorized");
+    }
+
+    // Get current expiration
+    const { data: spot } = await supabase
+        .from("spots")
+        .select("subscription_expires_at")
+        .eq("id", spotId)
+        .single();
+
+    let newExpiresAt = new Date();
+    // If currently valid and in future, extend from that date
+    if (spot?.subscription_expires_at) {
+        const currentExpiresAt = new Date(spot.subscription_expires_at);
+        if (currentExpiresAt > new Date()) {
+            newExpiresAt = currentExpiresAt;
+        }
+    }
+
+    // Add 1 year
+    newExpiresAt.setFullYear(newExpiresAt.getFullYear() + 1);
+
+    const { error } = await supabase
+        .from("spots")
+        .update({
+            subscription_expires_at: newExpiresAt.toISOString(),
+            listing_status: 'active',
+            is_hidden: false
+        })
+        .eq("id", spotId);
+
+    if (error) {
+        console.error("Error extending subscription:", error);
+        throw new Error("Failed to extend subscription");
+    }
+
+    revalidatePath(`/spots/${spotId}`);
+    return { success: true };
+}
+
+export async function exportSpots() {
+    const cookieStore = await cookies();
+    const supabase = createClient(cookieStore);
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("Unauthorized");
+
+    // Check for admin role
+    const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+    if (profile?.role !== 'admin') {
+        throw new Error("Unauthorized");
+    }
+
+    const { data: spots, error } = await supabase
+        .from("spots")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+    if (error) throw new Error(error.message);
+
+    if (!spots || spots.length === 0) return { success: true, csv: "", filename: "spots.csv" };
+
+    // Generate CSV
+    const headers = [
+        "id", "name", "type", "description", "location", "lat", "lng",
+        "business_hours", "regular_holiday", "average_cost", "status",
+        "created_at", "user_id", "is_proxy", "subscription_expires_at"
+    ];
+
+    const csvRows = [headers.join(",")];
+
+    for (const spot of spots) {
+        const row = headers.map(header => {
+            const value = spot[header] || "";
+            // Escape quotes and wrap in quotes
+            const escaped = String(value).replace(/"/g, '""');
+            return `"${escaped}"`;
+        });
+        csvRows.push(row.join(","));
+    }
+
+    const csvString = csvRows.join("\n");
+    const filename = `food-map_backup_${new Date().toISOString().split('T')[0]}.csv`;
+
+    return { success: true, csv: csvString, filename };
+}

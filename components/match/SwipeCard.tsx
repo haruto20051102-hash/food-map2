@@ -66,20 +66,20 @@ export function SwipeCard({ spot, onSwipe, active }: SwipeCardProps) {
 
             {/* Overlays */}
             <motion.div
-                style={{ opacity: likeOpacity }}
+                style={{ opacity: likeOpacity, scale: likeOpacity }}
                 className="absolute top-8 left-8 z-20 pointer-events-none"
             >
-                <div className="border-4 border-green-500 rounded-lg px-4 py-2 transform -rotate-12">
-                    <span className="text-4xl font-bold text-green-500 uppercase tracking-widest">LIKE</span>
+                <div className="border-[6px] border-green-500 rounded-lg px-6 py-2 transform -rotate-12 bg-black/20 backdrop-blur-sm shadow-2xl">
+                    <span className="text-5xl font-black text-green-500 uppercase tracking-widest drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">LIKE</span>
                 </div>
             </motion.div>
 
             <motion.div
-                style={{ opacity: nopeOpacity }}
+                style={{ opacity: nopeOpacity, scale: nopeOpacity }}
                 className="absolute top-8 right-8 z-20 pointer-events-none"
             >
-                <div className="border-4 border-red-500 rounded-lg px-4 py-2 transform rotate-12">
-                    <span className="text-4xl font-bold text-red-500 uppercase tracking-widest">NOPE</span>
+                <div className="border-[6px] border-red-500 rounded-lg px-6 py-2 transform rotate-12 bg-black/20 backdrop-blur-sm shadow-2xl">
+                    <span className="text-5xl font-black text-red-500 uppercase tracking-widest drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">NOPE</span>
                 </div>
             </motion.div>
 

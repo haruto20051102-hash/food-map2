@@ -24,7 +24,16 @@ export default async function EditSpotPage({ params }: { params: Promise<{ id: s
         notFound();
     }
 
-    if (spot.user_id !== user.id) {
+    // Check for admin role (fetch profile)
+    const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+    const isAdmin = profile?.role === 'admin';
+
+    if (spot.user_id !== user.id && !isAdmin) {
         // Prevent editing other's spots
         redirect("/spots/manage");
     }
@@ -38,7 +47,7 @@ export default async function EditSpotPage({ params }: { params: Promise<{ id: s
                 </p>
             </div>
 
-            <SpotForm initialData={spot} isEditing={true} />
+            <SpotForm initialData={spot} isEditing={true} isAdmin={isAdmin} />
         </div>
     );
 }
