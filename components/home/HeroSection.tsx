@@ -54,7 +54,7 @@ export function HeroSection() {
                     className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60"
                 >
                     見つけよう、茨城の <br className="hidden sm:inline" />
-                    <span className="text-primary text-glow font-serif italic">知られざる名店を</span>
+                    <span className="text-primary text-glow">知られざる名店を</span>
                 </motion.h1>
 
                 <motion.p
