@@ -61,6 +61,7 @@ export function Header() {
         { name: "マッチング", href: "/match" },
         { name: t.nav.favorites, href: "/favorites" }, // Protected route handled by middleware/page logic
         { name: "店主リレー", href: "/diary" },
+        { name: "お問い合わせ", href: "/contact" },
     ];
 
     return (

@@ -24,6 +24,8 @@ export type Spot = {
     user_id: string;
     is_proxy?: boolean;
     has_parking?: boolean;
+    phone_number?: string | null;
+    owner_email?: string | null;
 };
 
 // Client-side fetch (for simple use cases or if needed)

@@ -1,0 +1,3 @@
+-- Reverted: The user decided not to add the claim_token feature.
+-- If you already ran the previous SQL, you can use this to clean up:
+-- ALTER TABLE spots DROP COLUMN IF EXISTS claim_token;

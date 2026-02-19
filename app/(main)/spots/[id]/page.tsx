@@ -3,7 +3,7 @@ import { Map } from "@/components/ui/Map";
 import { getSpot } from "@/lib/db";
 import { createClient } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
-import { Star, Clock, Info, MapPin, Navigation, Banknote, CreditCard, Smartphone, QrCode, Wallet, Car } from "lucide-react";
+import { Star, Clock, Info, MapPin, Navigation, Banknote, CreditCard, Smartphone, QrCode, Wallet, Car, Phone } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FavoriteButton } from "@/components/ui/FavoriteButton";
@@ -101,7 +101,7 @@ export default async function SpotPage(props: { params: Params }) {
                             </p>
 
                             {/* Admin/Owner Actions */}
-                            {(isAdmin || (session?.user?.id === spot.user_id)) && (
+                            {(isAdmin || (session?.user?.id === spot.user_id) || (session?.user?.email && spot.owner_email && session.user.email === spot.owner_email)) && (
                                 <div className="mt-4 space-y-4">
                                     <div className="flex gap-2">
                                         <Link
@@ -144,6 +144,18 @@ export default async function SpotPage(props: { params: Params }) {
                                     Happy Hour: 18:00 - 20:00
                                 </p>
                             </div>
+
+                            {spot.phone_number && (
+                                <div className="rounded-lg border border-white/10 bg-muted/10 p-4">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <Phone className="h-4 w-4 text-primary" />
+                                        <span className="text-sm font-medium text-foreground">Phone</span>
+                                    </div>
+                                    <a href={`tel:${spot.phone_number}`} className="text-sm text-primary hover:underline">
+                                        {spot.phone_number}
+                                    </a>
+                                </div>
+                            )}
 
                             <div className="rounded-lg border border-white/10 bg-muted/10 p-4">
                                 <div className="flex items-center gap-2 mb-2">
@@ -222,7 +234,7 @@ export default async function SpotPage(props: { params: Params }) {
                             </div>
                         </div>
 
-                        {/* Owner Recommendations - REMOVED */}
+                        {/* Owner Recommendations (Disabled) */}
                         {/* <OwnerRecommendation spotId={spot.id} /> */}
 
                         {/* Reviews */}

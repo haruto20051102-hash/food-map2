@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSpot, updateSpot } from "@/lib/actions"; // We will add updateSpot later
-import { Loader2, CreditCard, CheckCircle, MapPin, Image as ImageIcon, Car } from "lucide-react";
+import { MapPin, Upload, Loader2, X, Plus, DollarSign, Clock, Calendar, Car, Phone, Mail, CheckCircle, CreditCard } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { ImageUploader } from "./ImageUploader";
 import { getCoordinates } from "@/lib/getCoordinates";
@@ -24,6 +25,8 @@ type SpotFormProps = {
         images: string[];
         is_proxy?: boolean;
         has_parking?: boolean;
+        phone_number?: string | null;
+        owner_email?: string | null;
     };
     isEditing?: boolean;
     isAdmin?: boolean;
@@ -151,10 +154,10 @@ export default function SpotForm({ initialData, isEditing = false, isAdmin = fal
 
             {/* Spot Details */}
             <div className="space-y-4">
-                <h3 className="text-lg font-semibold border-b border-white/10 pb-2">1. スポット情報</h3>
+                <h3 className="text-lg font-semibold border-b border-white/10 pb-2">1. お店の情報</h3>
 
                 <div className="grid gap-2">
-                    <label className="text-sm font-medium">スポット名</label>
+                    <label className="text-sm font-medium">お店の名前</label>
                     <input
                         name="name"
                         defaultValue={initialData?.name}
@@ -182,16 +185,49 @@ export default function SpotForm({ initialData, isEditing = false, isAdmin = fal
                         </select>
                     </div>
                     <div className="grid gap-2">
-                        <label className="text-sm font-medium">エリア (市町村)</label>
+                        <label className="text-sm font-medium">住所</label>
                         <input
                             name="location"
                             defaultValue={initialData?.location}
                             required
+
                             className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                             placeholder="例: 水戸市, 茨城県"
                         />
                     </div>
                 </div>
+
+                <div className="space-y-4">
+                    <label htmlFor="phone_number" className="text-base font-semibold flex items-center gap-2">
+                        <Phone className="w-4 h-4" /> 電話番号
+                    </label>
+                    <Input
+                        id="phone_number"
+                        name="phone_number"
+                        defaultValue={initialData?.phone_number || ""}
+                        placeholder="例: 03-1234-5678"
+                        className="bg-muted/50 border-input"
+                    />
+                </div>
+
+                {isAdmin && (
+                    <div className="space-y-4 border border-yellow-500/30 bg-yellow-500/10 p-4 rounded-lg">
+                        <label htmlFor="owner_email" className="text-base font-semibold flex items-center gap-2 text-yellow-500">
+                            <Mail className="w-4 h-4" /> オーナーメールアドレス (代理登録用)
+                        </label>
+                        <p className="text-xs text-muted-foreground mb-2">
+                            このメールアドレスでログインしたユーザーに編集権限を付与します。
+                        </p>
+                        <Input
+                            id="owner_email"
+                            name="owner_email"
+                            type="email"
+                            defaultValue={initialData?.owner_email || ""}
+                            placeholder="owner@example.com"
+                            className="bg-black/50 border-yellow-500/30 text-white"
+                        />
+                    </div>
+                )}
 
                 <div className="grid gap-2">
                     <label className="text-sm font-medium">説明文</label>
@@ -200,7 +236,7 @@ export default function SpotForm({ initialData, isEditing = false, isAdmin = fal
                         defaultValue={initialData?.description}
                         required
                         className="min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                        placeholder="このスポットの魅力や特徴を教えてください"
+                        placeholder="このお店の魅力や特徴を教えてください"
                     />
                 </div>
 

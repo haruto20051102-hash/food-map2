@@ -27,7 +27,37 @@ export async function OwnerRecommendation({ spotId }: OwnerRecommendationProps) 
         `)
         .eq("source_spot_id", spotId);
 
-    if (!recommendations || recommendations.length === 0) {
+    let displayRecommendations = recommendations;
+
+    // Fallback Mock Data if no DB data found
+    if (!displayRecommendations || displayRecommendations.length === 0) {
+        displayRecommendations = [
+            {
+                id: "mock-1",
+                comment: "最高の雰囲気で、デートにぴったりです。マスターのカクテルが絶品！(Sample)",
+                target_spot: {
+                    id: "mock-target-1",
+                    name: "Bar Midnight (Sample)",
+                    type: "Bar",
+                    location: "Mito City",
+                    images: ["/images/sample-bar.jpg"] // Fallback or placeholder
+                }
+            },
+            {
+                id: "mock-2",
+                comment: "静かに飲みたい時はここ。ジャズが流れる素敵な空間です。(Sample)",
+                target_spot: {
+                    id: "mock-target-2",
+                    name: "Jazz Club Blue (Sample)",
+                    type: "Jazz Bar",
+                    location: "Mito City",
+                    images: []
+                }
+            }
+        ] as any;
+    }
+
+    if (!displayRecommendations || displayRecommendations.length === 0) {
         return null;
     }
 
@@ -41,7 +71,7 @@ export async function OwnerRecommendation({ spotId }: OwnerRecommendationProps) 
             </h2>
 
             <div className="grid gap-6 md:grid-cols-2">
-                {recommendations.map((rec: any) => (
+                {displayRecommendations.map((rec: any) => (
                     <div key={rec.id} className="relative group overflow-hidden rounded-xl border border-white/10 bg-card/50 backdrop-blur-sm shadow-lg hover:border-primary/50 transition-colors">
                         {/* Comment Section */}
                         <div className="p-6 pb-20">

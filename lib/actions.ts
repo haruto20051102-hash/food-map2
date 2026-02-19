@@ -109,6 +109,8 @@ export async function createSpot(formData: FormData) {
         const averageCost = formData.get("average_cost") ? parseInt(formData.get("average_cost") as string) : null;
         const isProxy = formData.get("is_proxy") === "on";
         const hasParking = formData.get("has_parking") === "on";
+        const phoneNumber = formData.get("phone_number") as string || null;
+        const ownerEmail = formData.get("owner_email") as string || null;
 
         // Handle Image Upload
         const imageFiles = formData.getAll("images") as File[];
@@ -183,6 +185,8 @@ export async function createSpot(formData: FormData) {
             user_id: user.id,
             is_proxy: isAdmin && isProxy,
             has_parking: hasParking,
+            phone_number: phoneNumber,
+            owner_email: ownerEmail, // Save owner email
             subscription_expires_at: subscriptionExpiresAt,
             listing_status: isAdmin ? 'active' : 'pending_payment',
             tags: ["New", type],
@@ -346,6 +350,8 @@ export async function updateSpot(spotId: string, formData: FormData) {
     const averageCost = formData.get("average_cost") ? parseInt(formData.get("average_cost") as string) : null;
     const isProxy = formData.get("is_proxy") === "on";
     const hasParking = formData.get("has_parking") === "on";
+    const phoneNumber = formData.get("phone_number") as string || null;
+    const ownerEmail = formData.get("owner_email") as string || null;
 
     // Handle Image Upload (new images)
     const imageFiles = formData.getAll("images") as File[];
@@ -393,8 +399,9 @@ export async function updateSpot(spotId: string, formData: FormData) {
             regular_holiday: regularHoliday,
             payment_methods: paymentMethods,
             average_cost: averageCost,
-            ...(isAdmin ? { is_proxy: isProxy } : {}),
+            ...(isAdmin ? { is_proxy: isProxy, owner_email: ownerEmail } : {}),
             has_parking: hasParking,
+            phone_number: phoneNumber,
             images: updatedImages,
             // Update lat/lng if provided (re-geocoded)
             ...(formData.get("lat") && formData.get("lng") ? {

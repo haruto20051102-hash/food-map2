@@ -11,6 +11,7 @@ import Link from "next/link";
 
 
 import { CATEGORIES, CATEGORY_MAP } from "@/lib/constants";
+import { DiceButton } from "@/components/explore/DiceButton";
 
 export default function ExplorePage() {
     const [activeCategory, setActiveCategory] = useState("All");
@@ -102,6 +103,48 @@ export default function ExplorePage() {
         return true;
     };
 
+    // Effect to update Recommended Spot based on Category
+    useEffect(() => {
+        if (spots.length === 0) {
+            setRecommendedSpot(null);
+            return;
+        }
+
+        const todayStr = new Date().toDateString(); // e.g. "Mon Feb 12 2024"
+        const seedStr = todayStr + activeCategory;
+
+        let seed = 0;
+        for (let i = 0; i < seedStr.length; i++) {
+            seed += seedStr.charCodeAt(i);
+        }
+
+        let targetSpots = spots;
+        if (activeCategory !== "All") {
+            targetSpots = spots.filter(s => s.type === activeCategory);
+        }
+
+        // Prefer spots open NOW
+        const openNowSpots = targetSpots.filter(isOpenNow);
+        let candidates = openNowSpots;
+
+        // If no spots open NOW, fallback to spots open TODAY
+        if (candidates.length === 0) {
+            candidates = targetSpots.filter(isOpenToday);
+        }
+
+        // Final fallback to all spots in category
+        if (candidates.length === 0) {
+            candidates = targetSpots;
+        }
+
+        if (candidates.length > 0) {
+            const index = seed % candidates.length;
+            setRecommendedSpot(candidates[index]);
+        } else {
+            setRecommendedSpot(null);
+        }
+    }, [spots, activeCategory]);
+
     useEffect(() => {
         async function fetchData() {
             try {
@@ -112,23 +155,7 @@ export default function ExplorePage() {
                 ]);
 
                 setSpots(spotsData);
-
-                // Select Random Spot Open Today
-                // Select Random Spot Open Today (Sticky per day)
-                const todayStr = new Date().toDateString(); // e.g. "Mon Feb 12 2024"
-                let seed = 0;
-                for (let i = 0; i < todayStr.length; i++) {
-                    seed += todayStr.charCodeAt(i);
-                }
-
-                const openSpots = spotsData.filter(isOpenToday);
-                if (openSpots.length > 0) {
-                    const index = seed % openSpots.length;
-                    setRecommendedSpot(openSpots[index]);
-                } else if (spotsData.length > 0) {
-                    const index = seed % spotsData.length;
-                    setRecommendedSpot(spotsData[index]);
-                }
+                // Recommended Spot logic moved to separate useEffect
 
                 const session = sessionResult.data.session;
                 setIsLoggedIn(!!session);
@@ -280,8 +307,8 @@ export default function ExplorePage() {
                     </div>
                     <div className="relative z-10">
                         <div className="flex items-center gap-2 mb-4">
-                            <span className="bg-primary text-primary-foreground text-xs font-bold px-2 py-1 rounded-full animate-pulse">
-                                TODAY
+                            <span className="bg-primary text-primary-foreground text-xs font-bold px-2 py-1 rounded-full animate-pulse uppercase">
+                                Today's {activeCategory === "All" ? "" : activeCategory} Pick
                             </span>
                             <h2 className="text-xl font-bold text-foreground">今日のおすすめ</h2>
                         </div>
@@ -434,6 +461,8 @@ export default function ExplorePage() {
                     <Map spots={filteredSpots} className="h-full w-full" />
                 </div>
             )}
+
+            <DiceButton spots={spots} userLocation={userLocation} initialCategory={activeCategory} />
         </div>
     );
 }
