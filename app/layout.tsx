@@ -7,17 +7,17 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "Food Map | 隠れ家レストラン＆バー検索",
-  description: "あなたの街の隠れた名店を見つけよう。Food Mapで最高のレストランとバーを探索。",
+  title: "Hidden Gems | 隠れ家レストラン＆バー検索",
+  description: "あなたの街の隠れた名店を見つけよう。Hidden Gemsで最高のレストランとバーを探索。",
   openGraph: {
-    title: "Food Map | 隠れ家レストラン＆バー検索",
+    title: "Hidden Gems | 隠れ家レストラン＆バー検索",
     description: "あなたの街の隠れた名店を見つけよう。",
     type: "website",
     locale: "ja_JP",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Food Map | 隠れ家レストラン＆バー検索",
+    title: "Hidden Gems | 隠れ家レストラン＆バー検索",
     description: "あなたの街の隠れた名店を見つけよう。",
   },
 };

@@ -221,7 +221,7 @@ export async function createSpot(formData: FormData) {
                     price_data: {
                         currency: 'jpy',
                         product_data: {
-                            name: 'Food Map プレミアム掲載 (1年間)',
+                            name: 'Hidden Gems プレミアム掲載 (1年間)',
                             description: `${name} の掲載料 (年間プラン)`,
                         },
                         unit_amount: 6000,

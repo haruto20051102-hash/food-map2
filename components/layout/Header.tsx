@@ -76,7 +76,7 @@ export function Header() {
                     <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold shadow-lg shadow-primary/20 transition-transform group-hover:scale-105">
                         <MapPin className="h-5 w-5" />
                     </div>
-                    <span className="text-xl font-bold tracking-tight">Food Map</span>
+                    <span className="text-xl font-bold tracking-tight">Hidden Gems</span>
                 </Link>
 
                 {/* Desktop Nav */}

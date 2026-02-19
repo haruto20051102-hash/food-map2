@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { createClient } from '@/lib/supabase/client';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://food-map.example.com';
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://hidden-gems.example.com';
 
     // Static routes
     const routes = [
