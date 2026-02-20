@@ -40,14 +40,12 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
     matcher: [
-        /*
-         * Match all request paths except:
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         * - images - .svg, .png, .jpg, .jpeg, .gif, .webp
-         * - ping (health check)
-         */
         "/((?!_next/static|_next/image|favicon.ico|ping|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
     ],
+    // Vercel Edge Runtime blocks __dirname and standard Node built-ins.
+    // The following bypasses it for libs like @supabase/ssr that might use them down the tree.
+    unstable_allowDynamic: [
+        '**/.pnpm/**/node_modules/**',
+        '**/node_modules/**',
+    ]
 };
