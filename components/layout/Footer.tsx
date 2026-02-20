@@ -37,8 +37,14 @@ export function Footer() {
                         <Link href="/contact" className="text-sm text-muted-foreground hover:text-primary">
                             Contact
                         </Link>
+                        <Link href="/terms" className="text-sm text-muted-foreground hover:text-primary">
+                            利用規約
+                        </Link>
                         <Link href="/privacy" className="text-sm text-muted-foreground hover:text-primary">
-                            Privacy Policy
+                            プライバシーポリシー
+                        </Link>
+                        <Link href="/law" className="text-sm text-muted-foreground hover:text-primary">
+                            特定商取引法に基づく表記
                         </Link>
                     </div>
                     <div className="flex flex-col gap-2">
