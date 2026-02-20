@@ -20,10 +20,6 @@ const nextConfig: NextConfig = {
   },
 };
 
-// Add dummy webpack config to force fallback from Turbopack to Webpack
-// since Turbopack's Edge runtime has an issue with ReferenceError: __dirname in 16.1.6
-nextConfig.webpack = (config) => {
-  return config;
-};
+
 
 export default nextConfig;
