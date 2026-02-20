@@ -13,7 +13,7 @@ export default function LawPage() {
                             </tr>
                             <tr className="border-b border-white/10">
                                 <th className="py-4 px-4 font-semibold align-top">運営責任者</th>
-                                <td className="py-4 px-4">亀山 遥翔</td>
+                                <td className="py-4 px-4">亀山遥都</td>
                             </tr>
                             <tr className="border-b border-white/10">
                                 <th className="py-4 px-4 font-semibold align-top">所在地</th>
