@@ -42,10 +42,4 @@ export const config = {
     matcher: [
         "/((?!_next/static|_next/image|favicon.ico|ping|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
     ],
-    // Vercel Edge Runtime blocks __dirname and standard Node built-ins.
-    // The following bypasses it for libs like @supabase/ssr that might use them down the tree.
-    unstable_allowDynamic: [
-        '**/.pnpm/**/node_modules/**',
-        '**/node_modules/**',
-    ]
 };
