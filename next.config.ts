@@ -21,20 +21,28 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  webpack: (config, { isServer, nextRuntime, webpack }) => {
+  webpack: (config, { isServer, nextRuntime }) => {
     if (nextRuntime === 'edge') {
       config.resolve.alias = {
         ...config.resolve.alias,
         '@supabase/ssr': require.resolve('@supabase/ssr'),
       };
 
-      // Inject a global __dirname to prevent Webpack's Edge runtime crash
-      config.plugins.push(
-        new webpack.BannerPlugin({
-          banner: 'var __dirname = "/";',
-          raw: true,
-        })
-      );
+      // Prevent Webpack's Edge Native module injection triggered by @opentelemetry
+      // by forcefully scrubbing the __dirname string from the code AST before Webpack evaluates it
+      config.module.rules.push({
+        test: /\.(js|mjs|cjs)$/,
+        use: [
+          {
+            loader: 'string-replace-loader',
+            options: {
+              search: '__dirname',
+              replace: '""',
+              flags: 'g',
+            },
+          },
+        ],
+      });
     }
     return config;
   },
