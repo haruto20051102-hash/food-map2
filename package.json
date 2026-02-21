@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "stripe:login": "./stripe login",
-    "stripe:listen": "./stripe listen --forward-to localhost:3000/api/webhooks/stripe"
+    "stripe:listen": "./stripe listen --forward-to localhost:3000/api/webhooks/stripe",
+    "postinstall": "node patch-edge.js"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
