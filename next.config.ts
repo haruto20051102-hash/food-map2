@@ -28,13 +28,12 @@ const nextConfig: NextConfig = {
         '@supabase/ssr': require.resolve('@supabase/ssr'),
       };
 
-      // Provide mock Node.js globals for Edge compatibility
-      config.plugins.push(
-        new webpack.DefinePlugin({
-          __dirname: JSON.stringify("/"),
-          __filename: JSON.stringify(""),
-        })
-      );
+      // Disable Webpack's native __dirname injection in Edge
+      config.node = {
+        ...config.node,
+        __dirname: false,
+        __filename: false,
+      };
     }
     return config;
   },
