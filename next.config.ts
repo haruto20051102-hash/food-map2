@@ -21,28 +21,21 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  webpack: (config, { isServer, nextRuntime }) => {
+  webpack: (config, { nextRuntime, webpack }) => {
     if (nextRuntime === 'edge') {
       config.resolve.alias = {
         ...config.resolve.alias,
         '@supabase/ssr': require.resolve('@supabase/ssr'),
       };
 
-      // Prevent Webpack's Edge Native module injection triggered by @opentelemetry
-      // by forcefully scrubbing the __dirname string from the code AST before Webpack evaluates it
-      config.module.rules.push({
-        test: /\.(js|mjs|cjs)$/,
-        use: [
-          {
-            loader: 'string-replace-loader',
-            options: {
-              search: '__dirname',
-              replace: '""',
-              flags: 'g',
-            },
-          },
-        ],
-      });
+      // Polyfill __dirname at the global scope for the Vercel Edge runtime.
+      // Next.js internal edge chunks (like ua-parser-js) hardcode `__dirname`, which crashes V8.
+      config.plugins.push(
+        new webpack.BannerPlugin({
+          banner: 'globalThis.__dirname = "/";',
+          raw: true,
+        })
+      );
     }
     return config;
   },
