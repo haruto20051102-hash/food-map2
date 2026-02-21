@@ -28,12 +28,13 @@ const nextConfig: NextConfig = {
         '@supabase/ssr': require.resolve('@supabase/ssr'),
       };
 
-      // Disable Webpack's native __dirname injection in Edge
-      config.node = {
-        ...config.node,
-        __dirname: false,
-        __filename: false,
-      };
+      // Inject a global __dirname to prevent Webpack's Edge runtime crash
+      config.plugins.push(
+        new webpack.BannerPlugin({
+          banner: 'var __dirname = "/";',
+          raw: true,
+        })
+      );
     }
     return config;
   },
