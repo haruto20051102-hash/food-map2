@@ -234,8 +234,8 @@ export default async function SpotPage(props: { params: Params }) {
                             </div>
                         </div>
 
-                        {/* Owner Recommendations (Disabled) */}
-                        {/* <OwnerRecommendation spotId={spot.id} /> */}
+                        {/* Owner Recommendations */}
+                        <OwnerRecommendation spotId={spot.id} />
 
                         {/* Reviews */}
                         <ReviewSection

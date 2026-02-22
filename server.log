@@ -1,0 +1,22 @@
+   ▲ Next.js 15.1.12
+   - Local:        http://localhost:3002
+   - Network:      http://172.20.10.3:3002
+
+ ✓ Starting...
+ ✓ Ready in 332ms
+ ⨯ [Error: Cannot find module './vendor-chunks/@supabase.js'
+Require stack:
+- /Users/kameyamaharukato/food-map/.next/server/webpack-runtime.js
+- /Users/kameyamaharukato/food-map/.next/server/pages/_document.js
+- /Users/kameyamaharukato/food-map/node_modules/next/dist/server/require.js
+- /Users/kameyamaharukato/food-map/node_modules/next/dist/server/load-components.js
+- /Users/kameyamaharukato/food-map/node_modules/next/dist/build/utils.js
+- /Users/kameyamaharukato/food-map/node_modules/next/dist/build/swc/options.js
+- /Users/kameyamaharukato/food-map/node_modules/next/dist/build/swc/index.js
+- /Users/kameyamaharukato/food-map/node_modules/next/dist/build/next-config-ts/transpile-config.js
+- /Users/kameyamaharukato/food-map/node_modules/next/dist/server/config.js
+- /Users/kameyamaharukato/food-map/node_modules/next/dist/cli/next-test.js
+- /Users/kameyamaharukato/food-map/node_modules/next/dist/bin/next] {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}

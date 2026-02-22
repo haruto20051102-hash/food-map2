@@ -1,0 +1,61 @@
+
+> temp_app@0.1.0 build
+> node patch-edge.js && next build
+
+[Edge Runtime Patch] Target already clean: /Users/kameyamaharukato/food-map/node_modules/next/dist/compiled/ua-parser-js/ua-parser.js
+   ▲ Next.js 15.1.12
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Skipping linting
+   Checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/29) ...
+   Generating static pages (7/29) 
+   Generating static pages (14/29) 
+   Generating static pages (21/29) 
+ ✓ Generating static pages (29/29)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+┌ ƒ /                                    2.15 kB         161 kB
+├ ○ /_not-found                          158 B           106 kB
+├ ○ /about                               158 B           106 kB
+├ ƒ /api/webhooks/stripe                 158 B           106 kB
+├ ƒ /auth/callback                       158 B           106 kB
+├ ƒ /auth/signout                        158 B           106 kB
+├ ○ /contact                             2.44 kB         117 kB
+├ ƒ /diary                               3.83 kB         122 kB
+├ ƒ /diary/new                           3.41 kB         173 kB
+├ ○ /explore                             10.6 kB         194 kB
+├ ƒ /favorites                           3.44 kB         122 kB
+├ ○ /forgot-password                     2.89 kB         167 kB
+├ ○ /law                                 158 B           106 kB
+├ ○ /login                               2.91 kB         167 kB
+├ ƒ /map                                 1.41 kB         107 kB
+├ ƒ /match                               12.3 kB         167 kB
+├ ○ /ping                                158 B           106 kB
+├ ○ /privacy                             158 B           106 kB
+├ ƒ /profile                             3.23 kB         133 kB
+├ ○ /robots.txt                          0 B                0 B
+├ ○ /signup                              2.99 kB         167 kB
+├ ○ /sitemap.xml                         0 B                0 B
+├ ƒ /spots/[id]                          6.74 kB         179 kB
+├ ƒ /spots/[id]/edit                     172 B           121 kB
+├ ƒ /spots/manage                        2.81 kB         121 kB
+├ ○ /spots/new                           1.49 kB         177 kB
+├ ○ /terms                               158 B           106 kB
+└ ○ /update-password                     2.87 kB         167 kB
++ First Load JS shared by all            106 kB
+  ├ chunks/4bd1b696-05d8c30d860004ce.js  52.9 kB
+  ├ chunks/517-dda225ada8d2456e.js       50.6 kB
+  └ other shared chunks (total)          2.49 kB
+
+
+ƒ Middleware                             81.7 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

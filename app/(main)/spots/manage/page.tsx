@@ -6,6 +6,8 @@ import { cancelSpotListing, toggleSpotStatus } from "@/lib/actions";
 import { Eye, EyeOff } from "lucide-react";
 import { SubscriptionToggle } from "@/components/spots/SubscriptionToggle";
 import { AdminExportButton } from "@/components/admin/AdminExportButton";
+import { ContactsTable } from "@/components/admin/ContactsTable";
+import { BookOpen, Plus, Trash2 } from "lucide-react";
 
 export default async function ManageSpotsPage() {
     const cookieStore = await cookies();
@@ -36,6 +38,17 @@ export default async function ManageSpotsPage() {
         .from("spots")
         .select("*")
         .eq("user_id", user.id);
+
+    // Fetch Contacts and Diaries for Admin
+    let contacts: any[] = [];
+    let allDiaries: any[] = [];
+    if (isAdmin) {
+        const { data: contactsData } = await supabase.from("contacts").select("*").order("created_at", { ascending: false }).limit(10);
+        contacts = contactsData || [];
+
+        const { data: diaryData } = await supabase.from("diaries").select("*, spot:spot_id(name)").order("visited_at", { ascending: false }).limit(20);
+        allDiaries = diaryData || [];
+    }
 
     // Filter and sort proxy spots for admin
     const proxySpots = isAdmin && spots
@@ -113,6 +126,50 @@ export default async function ManageSpotsPage() {
                     ) : (
                         <p className="text-muted-foreground">現在、代理登録されているスポットはありません。</p>
                     )}
+                </div>
+            )}
+
+            {isAdmin && (
+                <div className="grid gap-8 mb-12 lg:grid-cols-2">
+                    {/* Contacts Management */}
+                    <div className="p-6 bg-card border border-white/10 rounded-xl">
+                        <ContactsTable initialContacts={contacts} />
+                    </div>
+
+                    {/* Diary Management */}
+                    <div className="p-6 bg-card border border-white/10 rounded-xl">
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-xl font-bold flex items-center gap-2">
+                                <BookOpen className="h-5 w-5 text-primary" />
+                                店主リレー管理
+                            </h2>
+                            <Link href="/diary/new" className="text-xs bg-primary/20 text-primary px-3 py-1 rounded-full font-bold hover:bg-primary/30 transition-colors flex items-center gap-1">
+                                <Plus className="h-3 w-3" /> 新規作成
+                            </Link>
+                        </div>
+                        <div className="max-h-[400px] overflow-y-auto space-y-3 pr-2 custom-scrollbar text-left">
+                            {allDiaries.map(diary => (
+                                <div key={diary.id} className="p-3 bg-white/5 rounded-lg border border-white/5 flex items-center justify-between group hover:border-primary/30 transition-colors">
+                                    <div className="min-w-0">
+                                        <div className="text-sm font-bold truncate">{diary.title}</div>
+                                        <div className="text-[10px] text-muted-foreground flex items-center gap-2">
+                                            <span>{diary.spot?.name}</span>
+                                            <span>•</span>
+                                            <span>{new Date(diary.visited_at).toLocaleDateString('ja-JP')}</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button className="p-1.5 text-muted-foreground hover:text-red-500 transition-colors">
+                                            <Trash2 className="h-4 w-4" />
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                            {allDiaries.length === 0 && (
+                                <p className="text-center text-muted-foreground py-8 text-sm">記事はありません。</p>
+                            )}
+                        </div>
+                    </div>
                 </div>
             )}
 
