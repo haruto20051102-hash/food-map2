@@ -23,7 +23,7 @@ export function SecretAddress({ address, className }: SecretAddressProps) {
                 </div>
 
                 <div className="flex-1">
-                    <p className="text-sm font-medium text-muted-foreground mb-0.5">Address</p>
+                    <p className="text-sm font-medium text-muted-foreground mb-0.5">住所</p>
                     <p className="font-mono text-base">
                         {address}
                     </p>

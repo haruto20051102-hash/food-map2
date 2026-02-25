@@ -137,7 +137,7 @@ export default async function SpotPage(props: { params: Params }) {
                             <div className="rounded-lg border border-white/10 bg-muted/10 p-4">
                                 <div className="flex items-center gap-2 mb-2">
                                     <Clock className="h-4 w-4 text-primary" />
-                                    <span className="text-sm font-medium text-foreground">Opening Hours</span>
+                                    <span className="text-sm font-medium text-foreground">営業時間</span>
                                 </div>
                                 <p className="text-sm text-muted-foreground">
                                     Mon-Sun: 18:00 - 04:00<br />
@@ -149,7 +149,7 @@ export default async function SpotPage(props: { params: Params }) {
                                 <div className="rounded-lg border border-white/10 bg-muted/10 p-4">
                                     <div className="flex items-center gap-2 mb-2">
                                         <Phone className="h-4 w-4 text-primary" />
-                                        <span className="text-sm font-medium text-foreground">Phone</span>
+                                        <span className="text-sm font-medium text-foreground">電話番号</span>
                                     </div>
                                     <a href={`tel:${spot.phone_number}`} className="text-sm text-primary hover:underline">
                                         {spot.phone_number}
@@ -160,7 +160,7 @@ export default async function SpotPage(props: { params: Params }) {
                             <div className="rounded-lg border border-white/10 bg-muted/10 p-4">
                                 <div className="flex items-center gap-2 mb-2">
                                     <Car className="h-4 w-4 text-primary" />
-                                    <span className="text-sm font-medium text-foreground">Parking</span>
+                                    <span className="text-sm font-medium text-foreground">駐車場</span>
                                 </div>
                                 <p className="text-sm text-muted-foreground font-bold">
                                     {spot.has_parking ? "駐車場あり 🅿️" : "駐車場なし"}
@@ -171,7 +171,7 @@ export default async function SpotPage(props: { params: Params }) {
                                 <div className="rounded-lg border border-white/10 bg-muted/10 p-4">
                                     <div className="flex items-center gap-2 mb-2">
                                         <Wallet className="h-4 w-4 text-primary" />
-                                        <span className="text-sm font-medium text-foreground">Average Cost</span>
+                                        <span className="text-sm font-medium text-foreground">予算</span>
                                     </div>
                                     <p className="text-sm text-muted-foreground">
                                         ¥{spot.average_cost.toLocaleString()}~ /人
@@ -182,7 +182,7 @@ export default async function SpotPage(props: { params: Params }) {
                             <div className="rounded-lg border border-white/10 bg-muted/10 p-4">
                                 <div className="flex items-center gap-2 mb-2">
                                     <CreditCard className="h-4 w-4 text-primary" />
-                                    <span className="text-sm font-medium text-foreground">Payment Methods</span>
+                                    <span className="text-sm font-medium text-foreground">決済方法</span>
                                 </div>
                                 <div className="flex flex-wrap gap-3">
                                     {spot.payment_methods?.map(method => {
