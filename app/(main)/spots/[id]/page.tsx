@@ -10,7 +10,7 @@ import { FavoriteButton } from "@/components/ui/FavoriteButton";
 import { getIsFavorite } from "@/lib/actions";
 import { ReviewSection } from "@/components/ui/ReviewSection";
 import { AdminDeleteButton } from "@/components/ui/AdminDeleteButton";
-import { OwnerRecommendation } from "@/components/spot/OwnerRecommendation";
+
 import { AdminRenewalButton } from "@/components/admin/AdminRenewalButton";
 
 
@@ -234,8 +234,7 @@ export default async function SpotPage(props: { params: Params }) {
                             </div>
                         </div>
 
-                        {/* Owner Recommendations */}
-                        <OwnerRecommendation spotId={spot.id} />
+
 
                         {/* Reviews */}
                         <ReviewSection
