@@ -15,8 +15,8 @@ export function HeroSection() {
                     alt="Ibaraki Hidden Gem"
                     className="absolute inset-0 w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-background/70 backdrop-blur-[2px]" />
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
+                <div className="absolute inset-0 bg-background/40 backdrop-blur-[1px]" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
 
                 <motion.div
                     animate={{
