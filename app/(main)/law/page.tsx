@@ -9,7 +9,7 @@ export default function LawPage() {
                         <tbody>
                             <tr className="border-b border-white/10">
                                 <th className="py-4 px-4 font-semibold w-1/3 align-top">販売業者（運営者）</th>
-                                <td className="py-4 px-4">Hidden Gems 運営事務局<br />※ユーザー様からの開示請求があった場合、遅滞なく開示いたします。</td>
+                                <td className="py-4 px-4">イバクレ 運営事務局<br />※ユーザー様からの開示請求があった場合、遅滞なく開示いたします。</td>
                             </tr>
                             <tr className="border-b border-white/10">
                                 <th className="py-4 px-4 font-semibold align-top">運営責任者</th>

@@ -5,7 +5,7 @@ export default function AboutPage() {
         <div className="container py-12 px-4 md:px-6">
             <div className="max-w-3xl mx-auto space-y-12">
                 <div className="text-center space-y-4">
-                    <h1 className="text-4xl font-bold tracking-tight">Hidden Gemsについて</h1>
+                    <h1 className="text-4xl font-bold tracking-tight">イバクレについて</h1>
                     <p className="text-xl text-muted-foreground">
                         茨城の隠れた名店を発見し、共有するコミュニティ
                     </p>
@@ -42,11 +42,11 @@ export default function AboutPage() {
                 </div>
 
                 <div className="bg-muted p-8 rounded-2xl">
-                    <h2 className="text-2xl font-bold mb-4">運営: Hidden Gemsプロジェクト</h2>
+                    <h2 className="text-2xl font-bold mb-4">運営: イバクレプロジェクト</h2>
                     <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
                         <div className="border-b border-border pb-2">
                             <dt className="text-sm font-medium text-muted-foreground">サービス名</dt>
-                            <dd className="text-base font-medium">Hidden Gems</dd>
+                            <dd className="text-base font-medium">イバクレ</dd>
                         </div>
                         <div className="border-b border-border pb-2">
                             <dt className="text-sm font-medium text-muted-foreground">所在地</dt>

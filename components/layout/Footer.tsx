@@ -59,7 +59,7 @@ export function Footer() {
                 </div>
                 <div className="mt-10 border-t border-white/5 pt-6 flex flex-col items-center justify-between gap-4 md:flex-row">
                     <p className="text-xs text-muted-foreground">
-                        &copy; 2024 Hidden Gems. All rights reserved.
+                        &copy; 2024 イバクレ. All rights reserved.
                     </p>
                 </div>
             </div>

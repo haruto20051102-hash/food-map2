@@ -102,7 +102,7 @@ export function SwipeInterface({ initialSpots, onLike }: SwipeInterfaceProps) {
                     </div>
                     <h3 className="text-2xl font-bold mb-3">No more {activeCategory === "All" ? "" : CATEGORY_MAP[activeCategory]} spots!</h3>
                     <p className="text-muted-foreground mb-8 max-w-[250px] mx-auto leading-relaxed">
-                        We've run out of hidden gems in your area for now. try changing the category or check back later.
+                        We've run out of spots in your area for now. try changing the category or check back later.
                     </p>
 
                     <div className="flex flex-col gap-3 w-full max-w-[200px]">

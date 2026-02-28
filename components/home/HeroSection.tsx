@@ -44,7 +44,7 @@ export function HeroSection() {
                     className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-sm text-primary backdrop-blur-sm"
                 >
                     <span className="flex h-2 w-2 rounded-full bg-primary mr-2 animate-pulse"></span>
-                    茨城の隠れ家スポットを発見しよう
+                    イバクレで茨城の隠れ家スポットを発見しよう
                 </motion.div>
 
                 <motion.h1
