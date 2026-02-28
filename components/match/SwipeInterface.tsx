@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { MatchCard } from "./MatchCard";
-import { X, Heart, RefreshCw } from "lucide-react";
-import { toggleFavorite } from "@/lib/actions";
+import { X, RefreshCw, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface Spot {
@@ -25,20 +24,9 @@ export function SwipeInterface({ initialSpots, isLoggedIn }: SwipeInterfaceProps
     const [spots, setSpots] = useState<Spot[]>(initialSpots);
     const router = useRouter();
 
-    const handleSwipeRight = async (spotId: string) => {
-        // Remove from current stack
-        setSpots(prev => prev.filter(s => s.id !== spotId));
-
-        if (isLoggedIn) {
-            // Assume the user wants to add it to favorites if swiped right
-            try {
-                // Add to favorites (we pass true to ensure it's added, or use existing toggle logic)
-                // If it fails, not much we can do visually since card is gone, but could show a toast
-                await toggleFavorite(spotId);
-            } catch (e) {
-                console.error("Failed to favorite spot", e);
-            }
-        }
+    const handleSwipeRight = (spotId: string) => {
+        // Navigate to spot details
+        router.push(`/spots/${spotId}`);
     };
 
     const handleSwipeLeft = (spotId: string) => {
@@ -96,10 +84,10 @@ export function SwipeInterface({ initialSpots, isLoggedIn }: SwipeInterfaceProps
                     </button>
                     <button
                         onClick={() => handleSwipeRight(spots[spots.length - 1].id)}
-                        className="w-16 h-16 rounded-full bg-card border border-border flex items-center justify-center shadow-lg hover:bg-green-500/10 hover:border-green-500/30 transition-colors group"
-                        title="お気に入りに追加 (右へスワイプ)"
+                        className="w-16 h-16 rounded-full bg-card border border-border flex items-center justify-center shadow-lg hover:bg-blue-500/10 hover:border-blue-500/30 transition-colors group"
+                        title="詳細を見る (右へスワイプ)"
                     >
-                        <Heart className="h-8 w-8 text-green-500 fill-green-500/20 group-hover:scale-110 transition-transform" />
+                        <ArrowRight className="h-8 w-8 text-blue-500 group-hover:scale-110 transition-transform" />
                     </button>
                 </div>
             )}

@@ -40,13 +40,8 @@ export default async function MatchPage() {
                     Match
                 </h1>
                 <p className="mt-2 text-muted-foreground">
-                    右にスワイプで「{session ? "お気に入り追加" : "いいね"}」、左にスワイプで「スキップ」
+                    右にスワイプで「詳細を見る」、左にスワイプで「スキップ」
                 </p>
-                {!session && (
-                    <p className="mt-1 text-xs text-yellow-500 bg-yellow-500/10 px-2 py-1 rounded-md inline-block">
-                        ログインすると、右スワイプでお気に入りに追加されます
-                    </p>
-                )}
             </div>
 
             <div className="w-full max-w-md mx-auto relative h-[600px] flex justify-center">

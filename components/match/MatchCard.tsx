@@ -104,9 +104,9 @@ export function MatchCard({ spot, active, onSwipeRight, onSwipeLeft }: MatchCard
                 {/* Overlays */}
                 <motion.div
                     style={{ opacity: likeOpacity }}
-                    className="absolute top-10 left-10 z-20 pointer-events-none rotate-[-15deg] border-4 border-green-500 rounded-md px-4 py-2"
+                    className="absolute top-10 left-10 z-20 pointer-events-none rotate-[-15deg] border-4 border-blue-500 rounded-md px-4 py-2"
                 >
-                    <span className="text-green-500 font-black text-4xl tracking-widest uppercase shadow-sm">LIKE</span>
+                    <span className="text-blue-500 font-black text-4xl tracking-widest uppercase shadow-sm">VIEW</span>
                 </motion.div>
 
                 <motion.div
