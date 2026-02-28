@@ -29,3 +29,45 @@ export async function getCoordinates(address: string): Promise<{ lat: number; ln
         return null;
     }
 }
+
+export async function getAddressFromCoordinates(lat: number, lng: number): Promise<{ displayName: string; address: Record<string, string> } | null> {
+    try {
+        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
+
+        const response = await fetch(url, {
+            headers: {
+                'User-Agent': 'FoodMapApp/1.0'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch address');
+        }
+
+        const data = await response.json();
+
+        if (data && data.display_name) {
+            // Simplify display name to typical Japanese format (remove postcodes, sometimes it's too detailed/backwards)
+            // Or just use the raw display_name and let the user edit it.
+            // A common approach for Japan is to extract province, city, suburb, etc.
+            let simpleAddress = data.display_name;
+            if (data.address) {
+                const a = data.address;
+                const parts = [a.province, a.city || a.town || a.village || a.county, a.suburb, a.neighbourhood, a.road, a.house_number].filter(Boolean);
+                if (parts.length > 0) {
+                    simpleAddress = parts.join(""); // Japanese addresses concatenate nicely
+                }
+            }
+
+            return {
+                displayName: simpleAddress || data.display_name,
+                address: data.address
+            };
+        }
+
+        return null;
+    } catch (error) {
+        console.error("Reverse geocoding error:", error);
+        return null;
+    }
+}

@@ -7,7 +7,7 @@ import { MapPin, Upload, Loader2, X, Plus, DollarSign, Clock, Calendar, Car, Pho
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { ImageUploader } from "./ImageUploader";
-import { getCoordinates } from "@/lib/getCoordinates";
+import { getCoordinates, getAddressFromCoordinates } from "@/lib/getCoordinates";
 
 type SpotFormProps = {
     initialData?: {
@@ -38,7 +38,44 @@ export default function SpotForm({ initialData, isEditing = false, isAdmin = fal
     const [newImageFiles, setNewImageFiles] = useState<File[]>([]);
     const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
     const [isGeocoding, setIsGeocoding] = useState(false);
+    const [isFetchingLocation, setIsFetchingLocation] = useState(false);
+    const [locationInput, setLocationInput] = useState(initialData?.location || "");
     const router = useRouter();
+
+    const handleGetCurrentLocation = () => {
+        if (!navigator.geolocation) {
+            alert("お使いのブラウザは位置情報取得に対応していません。");
+            return;
+        }
+
+        setIsFetchingLocation(true);
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                const { latitude: lat, longitude: lng } = position.coords;
+                const result = await getAddressFromCoordinates(lat, lng);
+                setIsFetchingLocation(false);
+
+                if (result) {
+                    const isIbaraki = JSON.stringify(result.address || {}).includes("Ibaraki") || JSON.stringify(result.address || {}).includes("茨城");
+
+                    if (!isIbaraki) {
+                        alert("申し訳ありません。現在、茨城県内のスポットのみ登録可能です。");
+                        return;
+                    }
+
+                    setLocationInput(result.displayName);
+                    setCoordinates({ lat, lng });
+                } else {
+                    alert("住所の取得に失敗しました。");
+                }
+            },
+            (error) => {
+                setIsFetchingLocation(false);
+                alert("位置情報の取得に失敗しました。ブラウザの設定で位置情報の利用を許可してください。");
+                console.error("Geolocation error:", error);
+            }
+        );
+    };
 
     const handleLocationBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
         const address = e.target.value;
@@ -193,16 +230,29 @@ export default function SpotForm({ initialData, isEditing = false, isAdmin = fal
                     <div className="grid gap-2">
                         <label className="flex items-center gap-2 text-sm font-medium">
                             住所
-                            {isGeocoding && <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />}
+                            {(isGeocoding || isFetchingLocation) && <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />}
                         </label>
-                        <input
-                            name="location"
-                            defaultValue={initialData?.location}
-                            required
-                            onBlur={handleLocationBlur}
-                            className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                            placeholder="例: 水戸市, 茨城県"
-                        />
+                        <div className="flex gap-2">
+                            <input
+                                name="location"
+                                value={locationInput}
+                                onChange={(e) => setLocationInput(e.target.value)}
+                                required
+                                onBlur={handleLocationBlur}
+                                className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                placeholder="例: 水戸市, 茨城県"
+                            />
+                            <button
+                                type="button"
+                                onClick={handleGetCurrentLocation}
+                                disabled={isFetchingLocation || isGeocoding}
+                                className="shrink-0 flex items-center gap-1.5 px-3 py-2 bg-secondary text-secondary-foreground rounded-md text-sm font-medium hover:bg-secondary/80 disabled:opacity-50"
+                                title="現在地から住所を取得"
+                            >
+                                <MapPin className="h-4 w-4" />
+                                <span className="hidden sm:inline">現在地</span>
+                            </button>
+                        </div>
                         {coordinates && (
                             <p className="text-xs text-green-500 flex items-center gap-1 mt-1">
                                 <CheckCircle className="h-3 w-3" /> マップ座標を取得しました
