@@ -7,6 +7,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://ibakure.vercel.app"),
   title: "イバクレ | 隠れ家レストラン＆バー検索",
   description: "あなたの街の隠れた名店を見つけよう。イバクレで最高のレストランとバーを探索。",
   openGraph: {
