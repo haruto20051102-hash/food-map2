@@ -11,6 +11,7 @@ interface Review {
     comment: string;
     created_at: string;
     user_id: string;
+    images?: string[];
 }
 
 interface ReviewSectionProps {
@@ -78,6 +79,16 @@ export function ReviewSection({ spotId, spotLat, spotLng, initialReviews = [], i
                             <p className="text-sm text-foreground/90 leading-relaxed">
                                 {review.comment}
                             </p>
+                            {review.images && review.images.length > 0 && (
+                                <div className="mt-3 flex flex-wrap gap-2">
+                                    {review.images.map((src, i) => (
+                                        <div key={i} className="relative h-20 w-20 overflow-hidden rounded-md border border-white/10 shrink-0">
+                                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                                            <img src={src} alt="Review attachment" className="h-full w-full object-cover hover:scale-105 transition-transform" />
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     ))
                 ) : (

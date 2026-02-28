@@ -6,6 +6,7 @@ import { getCurrentPosition, getDistanceInMeters } from "@/lib/geolocation";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { ImageUploader } from "./ImageUploader";
 
 interface ReviewFormProps {
     spotId: string;
@@ -18,6 +19,7 @@ interface ReviewFormProps {
 export function ReviewForm({ spotId, spotLat, spotLng, onCancel, onSuccess }: ReviewFormProps) {
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState("");
+    const [newImageFiles, setNewImageFiles] = useState<File[]>([]);
     const [locationVerified, setLocationVerified] = useState(false);
     const [verifying, setVerifying] = useState(false);
     const [submitting, setSubmitting] = useState(false);
@@ -58,11 +60,36 @@ export function ReviewForm({ spotId, spotLat, spotLng, onCancel, onSuccess }: Re
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) throw new Error("認証されていません");
 
+            // Handle Image Upload
+            const imageUrls: string[] = [];
+            for (const imageFile of newImageFiles) {
+                if (imageFile && imageFile.size > 0) {
+                    const fileExt = imageFile.name.split('.').pop();
+                    const fileName = `${user.id}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+
+                    const { error: uploadError } = await supabase.storage
+                        .from('reviews')
+                        .upload(fileName, imageFile);
+
+                    if (uploadError) {
+                        console.error("Upload error details:", uploadError);
+                        throw new Error(`画像アップロードに失敗しました: ${uploadError.message}`);
+                    }
+
+                    const { data: { publicUrl } } = supabase.storage
+                        .from('reviews')
+                        .getPublicUrl(fileName);
+
+                    imageUrls.push(publicUrl);
+                }
+            }
+
             const { error } = await supabase.from("reviews").insert({
                 spot_id: spotId,
                 user_id: user.id,
                 rating,
-                comment
+                comment,
+                images: imageUrls
             });
 
             if (error) throw error;
@@ -153,6 +180,16 @@ export function ReviewForm({ spotId, spotLat, spotLng, onCancel, onSuccess }: Re
                     className="min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                     required
                 />
+            </div>
+
+            <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium">写真（任意・最大4枚）</label>
+                <div className="rounded-md border border-input bg-transparent p-3">
+                    <ImageUploader
+                        onFilesChange={setNewImageFiles}
+                        maxFiles={4}
+                    />
+                </div>
             </div>
 
             <div className="flex gap-2 justify-end">
