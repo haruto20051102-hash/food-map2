@@ -9,10 +9,18 @@ export function HeroSection() {
         <section className="relative flex min-h-[90vh] flex-col items-center justify-center overflow-hidden bg-background pt-16">
             {/* Dynamic Background */}
             <div className="absolute inset-0 z-0">
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/10 via-background to-background" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                    src="/images/hero-bg.webp"
+                    alt="Ibaraki Hidden Gem"
+                    className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-background/70 backdrop-blur-[2px]" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
+
                 <motion.div
                     animate={{
-                        opacity: [0.3, 0.5, 0.3],
+                        opacity: [0.1, 0.3, 0.1],
                         scale: [1, 1.1, 1],
                     }}
                     transition={{
@@ -21,18 +29,6 @@ export function HeroSection() {
                         ease: "easeInOut"
                     }}
                     className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-primary/20 rounded-full blur-[100px]"
-                />
-                <motion.div
-                    animate={{
-                        opacity: [0.3, 0.6, 0.3],
-                        translateY: [0, -50, 0],
-                    }}
-                    transition={{
-                        duration: 15,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                    }}
-                    className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-secondary/20 rounded-full blur-[120px]"
                 />
             </div>
 
