@@ -56,9 +56,9 @@ export function MatchCard({ spot, active, onSwipeRight, onSwipeLeft }: MatchCard
 
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "ArrowRight") {
-                handleDragEnd(new MouseEvent(""), { offset: { x: 200 }, velocity: { x: 0, y: 0 }, point: { x: 0, y: 0 }, delta: { x: 0, y: 0 } });
+                handleDragEnd(new MouseEvent(""), { offset: { x: 200, y: 0 }, velocity: { x: 0, y: 0 }, point: { x: 0, y: 0 }, delta: { x: 0, y: 0 } });
             } else if (e.key === "ArrowLeft") {
-                handleDragEnd(new MouseEvent(""), { offset: { x: -200 }, velocity: { x: 0, y: 0 }, point: { x: 0, y: 0 }, delta: { x: 0, y: 0 } });
+                handleDragEnd(new MouseEvent(""), { offset: { x: -200, y: 0 }, velocity: { x: 0, y: 0 }, point: { x: 0, y: 0 }, delta: { x: 0, y: 0 } });
             }
         };
 
