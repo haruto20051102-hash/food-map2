@@ -77,6 +77,12 @@ export default function SpotForm({ initialData, isEditing = false, isAdmin = fal
             formData.append("images", file);
         });
 
+        // Append geocoded coordinates if available
+        if (coordinates) {
+            formData.append("lat", coordinates.lat.toString());
+            formData.append("lng", coordinates.lng.toString());
+        }
+
         setIsSubmitting(true);
 
         try {
@@ -185,15 +191,23 @@ export default function SpotForm({ initialData, isEditing = false, isAdmin = fal
                         </select>
                     </div>
                     <div className="grid gap-2">
-                        <label className="text-sm font-medium">住所</label>
+                        <label className="flex items-center gap-2 text-sm font-medium">
+                            住所
+                            {isGeocoding && <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />}
+                        </label>
                         <input
                             name="location"
                             defaultValue={initialData?.location}
                             required
-
+                            onBlur={handleLocationBlur}
                             className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                             placeholder="例: 水戸市, 茨城県"
                         />
+                        {coordinates && (
+                            <p className="text-xs text-green-500 flex items-center gap-1 mt-1">
+                                <CheckCircle className="h-3 w-3" /> マップ座標を取得しました
+                            </p>
+                        )}
                     </div>
                 </div>
 
