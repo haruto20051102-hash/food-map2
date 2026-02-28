@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { User, Mail, LogOut, MapPin, Trophy } from "lucide-react";
+import { User, Mail, LogOut, MapPin, Trophy, Share2 } from "lucide-react";
 import Link from "next/link";
 import { RankingEditor } from "@/components/profile/RankingEditor";
 import { cn } from "@/lib/utils";
@@ -61,6 +61,15 @@ export default async function ProfilePage() {
 
     const rankedSpots = reviewsWithSpots.filter((r) => r.rank !== null && r.rank > 0).sort((a, b) => (a.rank || 0) - (b.rank || 0));
 
+    // Generate Twitter share text
+    const shareText = encodeURIComponent(
+        "私の茨城隠れ家ベスト\n\n" +
+        rankedSpots.map((r: any) => `${r.rank}位: ${r.spot.name}`).join("\n") +
+        "\n\n#イバクレ #茨城グルメ #隠れ家"
+    );
+    const shareUrl = encodeURIComponent("https://food-map.vercel.app"); // Adjust to real domain if known
+    const twitterShareLink = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
+
     return (
         <div className="container max-w-2xl py-12 px-4">
             <h1 className="text-3xl font-bold tracking-tight mb-8">マイページ</h1>
@@ -98,7 +107,20 @@ export default async function ProfilePage() {
                         <Trophy className="h-5 w-5 text-yellow-500" />
                         My Best Restaurants
                     </h2>
-                    <RankingEditor reviews={reviewsWithSpots} />
+                    <div className="flex items-center gap-2">
+                        {rankedSpots.length > 0 && (
+                            <a
+                                href={twitterShareLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none disabled:opacity-50 border border-input bg-background hover:bg-muted h-9 px-3 gap-2"
+                            >
+                                <Share2 className="h-4 w-4 text-[#1DA1F2]" />
+                                {/* Optional text: <span className="hidden sm:inline">シェア</span> */}
+                            </a>
+                        )}
+                        <RankingEditor reviews={reviewsWithSpots} />
+                    </div>
                 </div>
 
                 {rankedSpots.length > 0 ? (
