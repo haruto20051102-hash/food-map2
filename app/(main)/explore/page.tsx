@@ -280,7 +280,9 @@ export default function ExplorePage() {
 
                 <div className="h-8 w-px bg-border mx-1 shrink-0" />
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center">
+                    <DiceButton spots={spots} userLocation={userLocation} initialCategory={activeCategory} variant="inline" />
+                    <div className="w-px h-6 bg-border mx-1 shrink-0" />
                     {CATEGORIES.map((cat) => (
                         <button
                             key={cat}
@@ -418,6 +420,8 @@ export default function ExplorePage() {
             <div className="hidden md:block mb-8 overflow-x-auto pb-4 md:pb-0">
                 <div className="flex items-center gap-2">
                     <Filter className="h-4 w-4 text-muted-foreground mr-2 shrink-0" />
+                    <DiceButton spots={spots} userLocation={userLocation} initialCategory={activeCategory} variant="inline" />
+                    <div className="w-px h-6 bg-border mx-2 shrink-0" />
                     {CATEGORIES.map((cat) => (
                         <button
                             key={cat}
@@ -461,8 +465,6 @@ export default function ExplorePage() {
                     <Map spots={filteredSpots} className="h-full w-full" />
                 </div>
             )}
-
-            <DiceButton spots={spots} userLocation={userLocation} initialCategory={activeCategory} />
         </div>
     );
 }

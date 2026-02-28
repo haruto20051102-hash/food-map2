@@ -13,9 +13,10 @@ interface DiceButtonProps {
     spots: Spot[];
     userLocation: { lat: number; lng: number } | null;
     initialCategory?: string; // Optional: can start with what was selected on page
+    variant?: "floating" | "inline";
 }
 
-export function DiceButton({ spots, userLocation, initialCategory = "All" }: DiceButtonProps) {
+export function DiceButton({ spots, userLocation, initialCategory = "All", variant = "floating" }: DiceButtonProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [isRolling, setIsRolling] = useState(false);
     const [resultSpot, setResultSpot] = useState<Spot | null>(null);
@@ -95,12 +96,21 @@ export function DiceButton({ spots, userLocation, initialCategory = "All" }: Dic
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
             <DialogTrigger asChild>
-                <Button
-                    size="icon"
-                    className="fixed bottom-24 right-6 h-14 w-14 rounded-full shadow-xl bg-gradient-to-br from-primary to-purple-600 hover:scale-105 transition-transform z-40 border-2 border-white/20"
-                >
-                    <Dice5 className="h-8 w-8 text-white animate-pulse" />
-                </Button>
+                {variant === "floating" ? (
+                    <Button
+                        size="icon"
+                        className="fixed bottom-24 right-6 h-14 w-14 rounded-full shadow-xl bg-gradient-to-br from-primary to-purple-600 hover:scale-105 transition-transform z-40 border-2 border-white/20"
+                    >
+                        <Dice5 className="h-8 w-8 text-white animate-pulse" />
+                    </Button>
+                ) : (
+                    <button
+                        className="flex-shrink-0 flex items-center gap-1.5 rounded-full px-3 py-1.5 md:py-1.5 text-xs md:text-sm font-medium transition-colors border bg-primary/10 hover:bg-primary/20 text-primary border-primary/30 whitespace-nowrap"
+                    >
+                        <Dice5 className="h-4 w-4" />
+                        サイコロ
+                    </button>
+                )}
             </DialogTrigger>
             <DialogContent className="sm:max-w-md bg-black/90 border-primary/20 backdrop-blur-md">
                 <DialogTitle className="sr-only">Random Spot Dice</DialogTitle>
